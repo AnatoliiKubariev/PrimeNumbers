@@ -33,11 +33,6 @@ std::vector<Interval> GetItervals(std::istream& stream)
     return intervals;
 }
 
-void WritePrimals(std::ostream& stream, const std::vector<int>& primals)
-{
-
-}
-
 std::string GetTag(std::istream& stream)
 {
     char ch;

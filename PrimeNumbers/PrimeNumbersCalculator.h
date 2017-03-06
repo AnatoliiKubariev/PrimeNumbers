@@ -4,18 +4,20 @@
 #include "Interval.h"
 
 #include <vector>
-
+#include <deque>
 
 class PrimeNumbersCalculator
 {
 public:
     PrimeNumbersCalculator();
 
-    std::vector<int> GetPrimals(const Interval& intervals);
+    std::vector<int> GetPrimes(Interval intervals);
 
 private:
-    void EratosthenesSieve();
-    std::vector<int> FindPrimals(const Interval& intervals);
+    void ModifiedEratosthenesSieve(const size_t start, size_t size);
+    std::vector<int> FindPrimes(const Interval& intervals);
+    void NSquarePrimesInitialise(const Interval& intervals);
 
-    std::vector<int> numbers;
+    std::deque<bool> numbers;
+    std::vector<int> n_square_primes;
 };

@@ -38,7 +38,7 @@ TEST(PrimeNumbersCalculatorTest, CanCalculate)
     std::ifstream stream("test.txt");
     PrimeNumbersCalculator calc;
     const Interval interval = GetItervals(stream)[0];
-    EXPECT_TRUE(VECTOR_EQ({{2, 3, 5, 7}}, calc.GetPrimals(interval)));
+    EXPECT_TRUE(VECTOR_EQ({{2, 3, 5, 7}}, calc.GetPrimes(interval)));
 }
 
 TEST(ParserTest, CanParse)
