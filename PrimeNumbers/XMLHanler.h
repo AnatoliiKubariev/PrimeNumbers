@@ -6,4 +6,6 @@
 #include <iostream>
 #include <fstream>
 
-std::vector<Interval> GetItervals(std::istream& stream);
+std::vector<Interval> GetIntervals(std::istream& stream);
+
+void WritePrimes(std::fstream& stream, const std::vector<int>& primals);

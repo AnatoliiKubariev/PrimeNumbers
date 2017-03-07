@@ -1,8 +1,0 @@
-<root>
-  <intervals>
-    <interval>
-      <low> 1 </low>
-        <high> 10</high>
-    </interval>
-   </intervals>
-</root>

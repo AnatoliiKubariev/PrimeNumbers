@@ -1,36 +1,89 @@
 #include "XMLHanler.h"
 
+#include <exception>
 #include <string>
+#include <stack>
 
 std::string GetTag(std::istream& stream);
 int GetData(std::istream& stream);
 
-std::vector<Interval> GetItervals(std::istream& stream)
+std::vector<Interval> GetIntervals(std::istream& stream)
 {
     std::vector<Interval> intervals;
-    std::string tag;
+    std::stack<std::string> tags;
     while(stream)
     {
-        tag = GetTag(stream);
-        if(tag == "interval")
+        std::string tag = GetTag(stream);
+
+        if(tag == "root" ||
+           tag == "intervals")
         {
+            tags.push(tag);
+        }
+        else if(tag == "interval")
+        {
+            tags.push(tag);
             intervals.push_back({-1, -1});
         }
         else if(tag == "low")
         {
+            tags.push(tag);
             intervals.back().low = GetData(stream);
         }
         else if(tag == "high")
         {
+            tags.push(tag);
             intervals.back().high = GetData(stream);
         }
-        else if(tag == "/intervals")
+        else if(tag == "/interval" ||
+                tag == "/low" ||
+                tag == "/high" ||
+                tag == "/intervals")
         {
+            tag.erase(0, 1);
+            if(tag != tags.top())
+            {
+                throw std::logic_error("not valid xml");
+            }
+            tags.pop();
+        }
+        else if(tag == "/root")
+        {
+            tag.erase(0, 1);
+            if(tag != tags.top())
+            {
+                throw std::logic_error("not valid xml");
+            }
             break;
         }
     }
-    stream.seekg(std::ios::beg);
+    stream.seekg(0);
     return intervals;
+}
+
+void WritePrimes(std::fstream& stream, const std::vector<int>& primes)
+{
+    std::fstream output("output.txt");
+    std::string tag;
+    while(stream)
+    {
+        tag = GetTag(stream);
+        if(tag == "/intervals")
+        {
+            stream.seekp(stream.tellg());
+            stream << std::endl << "<primes> ";
+
+            for(auto prime : primes)
+            {
+                stream << prime;
+                stream << " ";
+            }
+
+            stream << "</primes>" << std::endl << "</root>";
+            break;
+        }
+    }
+    stream.seekp(std::ios::beg);
 }
 
 std::string GetTag(std::istream& stream)
@@ -51,7 +104,6 @@ std::string GetTag(std::istream& stream)
     }
 
     return res;
-    return "";
 }
 
 int GetData(std::istream& stream)
