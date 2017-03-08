@@ -128,8 +128,8 @@ TEST(NotValidXML, ThrowExeption)
         "</intervals>\n"
         "</root>";
     {
-        std::ofstream stream("not_valid.txt");
-        stream << not_valid;
+        std::ofstream ofs("not_valid.txt");
+        ofs << not_valid;
     }
     std::ifstream stream("not_valid.txt");
     EXPECT_THROW(GetIntervals(stream), std::exception);

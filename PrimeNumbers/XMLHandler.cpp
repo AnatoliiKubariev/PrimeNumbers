@@ -4,8 +4,11 @@
 #include <string>
 #include <stack>
 
+namespace
+{
 std::string GetTag(std::istream& stream);
 int GetData(std::istream& stream);
+}
 
 std::vector<Interval> GetIntervals(std::istream& stream)
 {
@@ -63,7 +66,8 @@ std::vector<Interval> GetIntervals(std::istream& stream)
 
 void WritePrimes(std::fstream& stream, const std::vector<int>& primes)
 {
-    std::fstream output("output.txt");
+    stream.exceptions(std::ifstream::eofbit | std::ifstream::eofbit | 
+                      std::ifstream::failbit | std::ifstream::badbit);
     std::string tag;
     while(stream)
     {
@@ -83,9 +87,11 @@ void WritePrimes(std::fstream& stream, const std::vector<int>& primes)
             break;
         }
     }
-    stream.seekp(std::ios::beg);
+    stream.seekp(0);
 }
 
+namespace
+{
 std::string GetTag(std::istream& stream)
 {
     char ch;
@@ -121,4 +127,5 @@ int GetData(std::istream& stream)
     stream.seekg(pos);
 
     return std::stoi(res);
+}
 }
