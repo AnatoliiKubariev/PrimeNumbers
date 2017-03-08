@@ -114,7 +114,6 @@ std::string GetTag(std::istream& stream)
 
 int GetData(std::istream& stream)
 {
-    stream.exceptions(std::ios::);
     char curr;
     stream >> curr;
     std::string res;

@@ -84,6 +84,12 @@ std::vector<int> PrimeNumbersCalculator::FindPrimes(const Interval& intervals)
 
 void PrimeNumbersCalculator::NSquarePrimesInitialise(const Interval& interval)
 {
+    if(numbers.size() > interval.high + 1 ||
+       n_square_primes.size() > floor(sqrt(interval.high + 1)) + 1)
+    {
+        return;
+    }
+
     numbers.resize(interval.high + 1);
     const auto n_square = floor(sqrt(interval.high + 1)) + 1;
     for(auto i = 2; i <= n_square; ++i)
