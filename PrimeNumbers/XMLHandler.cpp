@@ -12,6 +12,7 @@ int GetData(std::istream& stream);
 
 std::vector<Interval> GetIntervals(std::istream& stream)
 {
+    stream.exceptions(std::ifstream::eofbit | std::ifstream::failbit | std::ifstream::badbit);
     std::vector<Interval> intervals;
     std::stack<std::string> tags;
     while(stream)
@@ -66,8 +67,7 @@ std::vector<Interval> GetIntervals(std::istream& stream)
 
 void WritePrimes(std::fstream& stream, const std::vector<int>& primes)
 {
-    stream.exceptions(std::ifstream::eofbit | std::ifstream::eofbit | 
-                      std::ifstream::failbit | std::ifstream::badbit);
+    stream.exceptions(std::ifstream::eofbit | std::ifstream::failbit | std::ifstream::badbit);
     std::string tag;
     while(stream)
     {
@@ -114,6 +114,7 @@ std::string GetTag(std::istream& stream)
 
 int GetData(std::istream& stream)
 {
+    stream.exceptions(std::ios::);
     char curr;
     stream >> curr;
     std::string res;
