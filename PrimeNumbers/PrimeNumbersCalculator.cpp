@@ -44,7 +44,7 @@ std::vector<int> PrimeNumbersCalculator::GetPrimes(Interval interval)
 
     return FindPrimes(interval);
 }
- 
+
 void PrimeNumbersCalculator::ModifiedEratosthenesSieve(const size_t start, size_t size)
 {
     size += start;

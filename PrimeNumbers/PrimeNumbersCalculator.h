@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
 #include "Interval.h"
 
-#include <vector>
 #include <deque>
+#include <vector>
 
 class PrimeNumbersCalculator
 {

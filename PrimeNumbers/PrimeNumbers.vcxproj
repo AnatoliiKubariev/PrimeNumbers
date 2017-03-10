@@ -119,7 +119,7 @@
   <ItemGroup>
     <ClInclude Include="Interval.h" />
     <ClInclude Include="PrimeNumbersCalculator.h" />
-    <ClInclude Include="XMLHanler.h" />
+    <ClInclude Include="XMLHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,13 +1,19 @@
-#include "XMLHanler.h"
+#include "XMLHandler.h"
 
 #include <exception>
-#include <string>
 #include <stack>
+#include <string>
 
 namespace
 {
 std::string GetTag(std::istream& stream);
 int GetData(std::istream& stream);
+}
+
+std::vector<Interval> GetIntervals(const std::string& file_name)
+{
+    std::ifstream ifs(file_name);
+    return GetIntervals(ifs);
 }
 
 std::vector<Interval> GetIntervals(std::istream& stream)
@@ -63,6 +69,12 @@ std::vector<Interval> GetIntervals(std::istream& stream)
     }
     stream.seekg(0);
     return intervals;
+}
+
+void WritePrimes(const std::string& file_name, const std::vector<int>& primes)
+{
+    std::fstream fs(file_name);
+    WritePrimes(fs, primes);
 }
 
 void WritePrimes(std::fstream& stream, const std::vector<int>& primes)

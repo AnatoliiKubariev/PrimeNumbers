@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "XMLHanler.h"
+#include "XMLHandler.h"
 #include "PrimeNumbersCalculator.h"
 
 #include <fstream>
