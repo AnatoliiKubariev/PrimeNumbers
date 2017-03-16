@@ -4,10 +4,27 @@
 
 std::vector<size_t> GetPartsSize(const size_t size, const size_t parts_number);
 
+
+PrimeNumbersCalculator::~PrimeNumbersCalculator()
+{
+    finished = true;
+    condition_work.notify_all();
+    for(auto& thread : threads)
+    {
+        thread.join();
+    }
+}
+
 PrimeNumbersCalculator::PrimeNumbersCalculator()
     : numbers(2, false)
     , n_square_primes(0)
+    , tasks_counter(0)
+    , finished(false)
 {
+    for(auto i = 0; i < std::thread::hardware_concurrency(); ++i)
+    {
+        threads.push_back(std::thread(&PrimeNumbersCalculator::ModifiedEratosthenesSieve, this, i));
+    }
 }
 
 std::vector<int> PrimeNumbersCalculator::GetPrimes(Interval interval)
@@ -29,43 +46,68 @@ std::vector<int> PrimeNumbersCalculator::GetPrimes(Interval interval)
         return FindPrimes(interval);
     }
 
-    auto parts_size = GetPartsSize(interval.high - interval.low + 1, std::thread::hardware_concurrency());
-    std::vector<std::thread> threads;
+    const auto parts_size = GetPartsSize(interval.high - interval.low + 1, std::thread::hardware_concurrency());
     auto start = interval.low;
     for(auto size : parts_size)
     {
-        threads.push_back(std::thread(&PrimeNumbersCalculator::ModifiedEratosthenesSieve, this, start, size));
+        processing_parts.push({start, static_cast<int>(size)});
+        condition_work.notify_one();
         start += size;
     }
-    for(auto& thread : threads)
+
+    std::unique_lock<std::mutex> lock(mutex_sieve);
+    condition_finished.wait(lock, [&parts_size, this]()
     {
-        thread.join();
-    }
+        return tasks_counter == parts_size.size();
+    });
+
+    tasks_counter = 0;
 
     return FindPrimes(interval);
 }
 
-void PrimeNumbersCalculator::ModifiedEratosthenesSieve(const size_t start, size_t size)
+void PrimeNumbersCalculator::ModifiedEratosthenesSieve(const size_t thread_id)
 {
-    size += start;
-    for(auto i = start; i < size; ++i)
+    while(true)
     {
-        numbers[i] = true;
-    }
-
-    for(auto i = 0; i < n_square_primes.size(); ++i)
-    {
-        for(auto j = start; j < size; ++j)
+        auto start = 0;
+        auto end = 0;
         {
-            if(j % n_square_primes[i] == 0)
+            std::unique_lock<std::mutex> lock(mutex_sieve);
+            condition_work.wait(lock, [this]() { return !processing_parts.empty() || finished; });
+            if(finished)
             {
-                for(auto k = n_square_primes[i] * n_square_primes[i]; k < size; k += n_square_primes[i])
+                return;
+            }
+
+            const auto temp_interval = processing_parts.front();
+            processing_parts.pop();
+            start = temp_interval.low;
+            end = temp_interval.high;
+        }
+        end += start;
+
+        for(auto i = start; i < end; ++i)
+        {
+            numbers[i] = true;
+        }
+
+        for(auto i = 0; i < n_square_primes.size(); ++i)
+        {
+            for(auto j = start; j < end; ++j)
+            {
+                if(j % n_square_primes[i] == 0)
                 {
-                    numbers[k] = false;
+                    for(auto k = n_square_primes[i] * n_square_primes[i]; k < end; k += n_square_primes[i])
+                    {
+                        numbers[k] = false;
+                    }
+                    break;
                 }
-                break;
             }
         }
+        ++tasks_counter;
+        condition_finished.notify_one();
     }
 }
 

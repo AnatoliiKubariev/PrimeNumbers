@@ -21,6 +21,8 @@ int main(int argc, char **argv)
 
     PrimeNumbersCalculator calc;
     std::vector<int> primes;
+    try
+    {
     for(auto& interval : GetIntervals(file_name))
     {
         for(auto prime : calc.GetPrimes(interval))
@@ -28,8 +30,15 @@ int main(int argc, char **argv)
             primes.push_back(prime);
         }
     }
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Exeption: " << e.what() << std::endl;
+        return 1;
+    }
 
     WritePrimes(file_name, primes);
 
+    std::cout << "Task complete" << std::endl;
     return 0;
 }
